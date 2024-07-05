@@ -1,35 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { prepare_fizzbuzz_results, output_fizzbuzz } from "../fizzbuzz.js";
+import { outputFizzBuzz } from "../fizzbuzz.js";
 
-test("prepare_fizzbuzz_results", () => {
-  const expected = [
-    "1",
-    "2",
-    "Fizz",
-    "4",
-    "Buzz",
-    "Fizz",
-    "7",
-    "8",
-    "Fizz",
-    "Buzz",
-    "11",
-    "Fizz",
-    "13",
-    "14",
-    "FizzBuzz",
-    "16",
-    "17",
-    "Fizz",
-    "19",
-    "Buzz",
-  ];
-  assert.deepEqual(prepare_fizzbuzz_results(20), expected);
-});
-
-test("output_fizzbuzz", () => {
+test("outputFizzBuzz", () => {
   const expected = [
     "1",
     "2",
@@ -57,11 +31,10 @@ test("output_fizzbuzz", () => {
   let output = "";
 
   console.log = (message) => {
-    output += message + "\n";
+    output += output ? "\n" + message : message;
   };
 
-  output_fizzbuzz(20);
-  output = output.trim();
+  outputFizzBuzz(20);
   console.log = original_console_log;
 
   assert.strictEqual(output, expected);
