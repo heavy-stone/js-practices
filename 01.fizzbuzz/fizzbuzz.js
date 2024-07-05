@@ -3,30 +3,22 @@
 import { fileURLToPath } from "url";
 import process from "process";
 
-export function prepare_fizzbuzz_results(max_num) {
-  const results = [...Array(max_num).keys()].map((i) => {
-    const num = i + 1;
+export function outputFizzBuzz(max_num) {
+  const nums = [...Array(max_num).keys()].map((i) => i + 1)
+
+  nums.map((num) => {
     if (num % 3 === 0 && num % 5 === 0) {
-      return "FizzBuzz";
+      console.log("FizzBuzz");
     } else if (num % 3 === 0) {
-      return "Fizz";
+      console.log("Fizz");
     } else if (num % 5 === 0) {
-      return "Buzz";
+      console.log("Buzz");
     } else {
-      return num.toString();
+      console.log(num.toString());
     }
-  });
-
-  return results;
-}
-
-export function output_fizzbuzz(max_num) {
-  const results = prepare_fizzbuzz_results(max_num);
-  results.forEach((result) => {
-    console.log(result);
   });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  output_fizzbuzz(20);
+  outputFizzBuzz(20);
 }
