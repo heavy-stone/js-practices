@@ -3,8 +3,8 @@
 import { fileURLToPath } from "url";
 import process from "process";
 
-export function outputFizzBuzz(max_num) {
-  const nums = [...Array(max_num).keys()].map((i) => i + 1)
+export function outputFizzBuzz(maxNum) {
+  const nums = [...Array(maxNum).keys()].map((i) => i + 1);
 
   nums.map((num) => {
     if (num % 3 === 0 && num % 5 === 0) {
