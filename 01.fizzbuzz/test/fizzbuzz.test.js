@@ -1,7 +1,17 @@
-import { test } from "node:test";
+import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
 import { outputFizzBuzz } from "../fizzbuzz.js";
+
+let originalConsoleLog;
+
+before(() => {
+  originalConsoleLog = console.log;
+});
+
+after(() => {
+  console.log = originalConsoleLog;
+});
 
 test("outputFizzBuzz", () => {
   const expected = [
@@ -27,15 +37,12 @@ test("outputFizzBuzz", () => {
     "Buzz",
   ].join("\n");
 
-  const original_console_log = console.log;
-  let output = "";
-
-  console.log = (message) => {
-    output += output ? "\n" + message : message;
+  let stdoutLines = [];
+  console.log = (stdoutLine) => {
+    stdoutLines.push(stdoutLine);
   };
-
   outputFizzBuzz(20);
-  console.log = original_console_log;
+  const stdoutResult = stdoutLines.join("\n");
 
-  assert.strictEqual(output, expected);
+  assert.strictEqual(stdoutResult, expected);
 });
