@@ -49,6 +49,7 @@ function validateOptions(options) {
 function outputCalendar(options, today) {
   const DAY_DIGIT = 2;
   const SATURDAY_INDEX = 6;
+  const WEEK_LABEL = "日 月 火 水 木 金 土";
 
   const year = options.y === undefined ? today.getFullYear() : options.y;
   const month = options.m === undefined ? today.getMonth() + 1 : options.m;
@@ -64,7 +65,6 @@ function outputCalendar(options, today) {
   }
 
   const header = formatToHeader(monthFirstDate);
-  const weekLabel = "日 月 火 水 木 金 土";
   const spacesBeforeMonthFirstDate = "   ".repeat(monthFirstDate.getDay());
   const daysString = monthDates
     .map((date) => {
@@ -81,7 +81,7 @@ function outputCalendar(options, today) {
     })
     .join("");
   const calendarDays = spacesBeforeMonthFirstDate + daysString;
-  const calendar = [header, weekLabel, calendarDays].join("\n").concat("\n");
+  const calendar = [header, WEEK_LABEL, calendarDays].join("\n").concat("\n");
   console.log(calendar);
 }
 
