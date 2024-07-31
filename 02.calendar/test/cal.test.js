@@ -1,20 +1,15 @@
 import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
-import sinon from "sinon";
 import { execCalendar } from "../cal.js";
 
 let originalConsoleLog;
-const fixedDate = new Date(2024, 6, 26); // new Date()を2024年7月26日に固定
-let clock;
 
 before(() => {
   originalConsoleLog = console.log;
-  clock = sinon.useFakeTimers(fixedDate);
 });
 
 after(() => {
   console.log = originalConsoleLog;
-  clock.restore();
 });
 
 test("execCalendar with no options", () => {
@@ -31,8 +26,7 @@ test("execCalendar with no options", () => {
   console.log = (stdoutLine) => {
     stdoutLines.push(stdoutLine);
   };
-  const today = new Date();
-  execCalendar({ y: today.getFullYear(), m: today.getMonth() + 1 });
+  execCalendar({}, new Date(2024, 6, 26)); // todayを2024年7月26日と想定する
   const stdoutResult = stdoutLines.join("\n");
 
   assert.strictEqual(stdoutResult, expected);

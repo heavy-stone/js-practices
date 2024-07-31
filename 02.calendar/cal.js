@@ -4,11 +4,11 @@ import { fileURLToPath } from "url";
 import process from "process";
 import parseArgs from "minimist";
 
-export function execCalendar(options) {
+export function execCalendar(options, today = new Date()) {
   const isValidOptions = validateOptions(options);
   if (!isValidOptions) return;
 
-  outputCalendar(options);
+  outputCalendar(options, today);
 }
 
 function validateOptions(options) {
@@ -46,11 +46,10 @@ function validateOptions(options) {
   return true;
 }
 
-function outputCalendar(options) {
+function outputCalendar(options, today) {
   const DAY_DIGIT = 2; // 日付の表示桁数
   const SATURDAY_INDEX = 6;
 
-  const today = new Date();
   const year = options.y === undefined ? today.getFullYear() : options.y;
   const month = options.m === undefined ? today.getMonth() + 1 : options.m;
   const monthFirstDate = new Date(year, month - 1, 1);
