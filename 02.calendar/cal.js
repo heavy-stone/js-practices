@@ -47,7 +47,7 @@ function validateOptions(options) {
 }
 
 function outputCalendar(options, today) {
-  const DAY_DIGIT = 2; // 日付の表示桁数
+  const DAY_DIGIT = 2;
   const SATURDAY_INDEX = 6;
 
   const year = options.y === undefined ? today.getFullYear() : options.y;
