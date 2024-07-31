@@ -64,7 +64,7 @@ function outputCalendar(options, today) {
     monthDates.push(new Date(date));
   }
 
-  const header = formatToHeader(monthFirstDate);
+  const header = formatHeader(monthFirstDate);
   const spacesBeforeMonthFirstDate = "   ".repeat(monthFirstDate.getDay());
   const daysString = monthDates
     .map((date) => {
@@ -85,7 +85,7 @@ function outputCalendar(options, today) {
   console.log(calendar);
 }
 
-function formatToHeader(date) {
+function formatHeader(date) {
   const CALENDAR_WIDTH = 20;
 
   const localeDateString = date.toLocaleDateString("ja-JP", {
