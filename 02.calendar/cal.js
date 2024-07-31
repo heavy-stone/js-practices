@@ -88,12 +88,7 @@ function outputCalendar(options, today) {
 function formatHeader(date) {
   const CALENDAR_WIDTH = 20;
 
-  const localeDateString = date.toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "short",
-  });
-  const [year, month] = localeDateString.split("年");
-  const headerString = `${month} ${year}`;
+  const headerString = `${date.getMonth() + 1}月 ${date.getFullYear()}`;
   const paddingLeft = Math.floor((CALENDAR_WIDTH - headerString.length) / 2);
   return " ".repeat(paddingLeft) + headerString;
 }
