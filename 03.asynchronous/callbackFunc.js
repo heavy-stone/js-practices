@@ -10,31 +10,23 @@ export default function callbackFunc(callback) {
   db.run(
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
     () => {
-      const stmt = db.prepare("INSERT INTO books(title) VALUES (?)");
-      const total = 2;
+      db.run("INSERT INTO books(title) VALUES (?)", "Book 1", function () {
+        console.log(this.lastID);
 
-      for (let i = 1; i <= total; i++) {
-        const title = `Book ${i}`;
-        stmt.run(title, () => {
-          console.log(`INSERT: id=${i} title=${title}`);
+        db.get(
+          "SELECT id, title FROM books WHERE id = ?",
+          this.lastID,
+          (_, row) => {
+            console.log(row);
 
-          if (i === total) {
-            stmt.finalize(() => {
-              db.all("SELECT id, title FROM books", (_, rows) => {
-                rows.forEach((row) => {
-                  console.log(`SELECT: id=${row.id} title=${row.title}`);
-                });
-
-                db.run("DROP TABLE books", () => {
-                  db.close(() => {
-                    if (callback) callback();
-                  });
-                });
+            db.run("DROP TABLE books", () => {
+              db.close(() => {
+                if (callback) callback();
               });
             });
-          }
-        });
-      }
+          },
+        );
+      });
     },
   );
 }

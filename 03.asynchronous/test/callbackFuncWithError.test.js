@@ -15,9 +15,8 @@ function afterTest() {
 
 test("callback with error", (t, done) => {
   const expected = [
-    "INSERT: id=1 title=Duplicate Book",
-    "SQLITE_CONSTRAINT: UNIQUE constraint failed: books.title",
-    "SQLITE_ERROR: no such table: no_table_name",
+    "Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
+    "Error: SQLITE_ERROR: no such table: no_table_name",
   ].join("\n");
 
   let stdoutLines = [];
