@@ -4,14 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-import {
-  dbRunPromise,
-  dbPreparePromise,
-  dbAllPromise,
-  dbClosePromise,
-  stmtRunPromise,
-  stmtFinalizePromise,
-} from "./promiseFunc.js";
+import { dbRunPromise, dbGetPromise, dbClosePromise } from "./promiseFunc.js";
 
 export default async function asyncAwaitFunc(callback) {
   const db = new sqlite3.Database(":memory:");
@@ -21,24 +14,19 @@ export default async function asyncAwaitFunc(callback) {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   );
 
-  const stmt = await dbPreparePromise(
+  const _this = await dbRunPromise(
     db,
     "INSERT INTO books(title) VALUES (?)",
+    "Book 1",
   );
+  console.log(_this.lastID);
 
-  const promises = [];
-  for (let i = 1; i <= 2; i++) {
-    const title = `Book ${i}`;
-    promises.push(await stmtRunPromise(stmt, title));
-    console.log(`INSERT: id=${i} title=${title}`);
-  }
-  await Promise.all(promises);
-  await stmtFinalizePromise(stmt);
-
-  const rows = await dbAllPromise(db, "SELECT id, title FROM books");
-  rows.forEach((row) => {
-    console.log(`SELECT: id=${row.id} title=${row.title}`);
-  });
+  const row = await dbGetPromise(
+    db,
+    "SELECT id, title FROM books WHERE id = ?",
+    _this.lastID,
+  );
+  console.log(row);
 
   await dbRunPromise(db, "DROP TABLE books");
   await dbClosePromise(db);
