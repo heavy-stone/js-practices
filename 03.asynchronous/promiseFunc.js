@@ -12,28 +12,22 @@ export default function promiseFunc(callback) {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   )
     .then(() => {
-      return dbPreparePromise(db, "INSERT INTO books(title) VALUES (?)");
+      return dbRunPromise(db, "INSERT INTO books(title) VALUES (?)", "Book 1");
     })
-    .then((stmt) => {
-      const promises = [];
-      for (let i = 1; i <= 2; i++) {
-        const title = `Book ${i}`;
-        promises.push(
-          stmtRunPromise(stmt, title).then(() => {
-            console.log(`INSERT: id=${i} title=${title}`);
-          }),
-        );
-      }
-      return Promise.all(promises).then(() => stmt);
+    .then((_this) => {
+      console.log(_this.lastID);
+      return _this.lastID;
     })
-    .then((stmt) => {
-      return stmtFinalizePromise(stmt);
+    .then((lastID) => {
+      return dbGetPromise(
+        db,
+        "SELECT id, title FROM books WHERE id = ?",
+        lastID,
+      );
     })
-    .then(() => dbAllPromise(db, "SELECT id, title FROM books"))
-    .then((rows) => {
-      rows.forEach((row) => {
-        console.log(`SELECT: id=${row.id} title=${row.title}`);
-      });
+    .then((row) => {
+      console.log(row);
+
       return dbRunPromise(db, "DROP TABLE books");
     })
     .then(() => {
@@ -46,35 +40,23 @@ export default function promiseFunc(callback) {
 
 export function dbRunPromise(db, sql, ...params) {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, (err) => {
+    db.run(sql, params, function (err) {
       if (err) {
         reject(err);
       } else {
-        resolve();
+        resolve(this);
       }
     });
   });
 }
 
-export function dbPreparePromise(db, sql, ...params) {
+export function dbGetPromise(db, sql, ...params) {
   return new Promise((resolve, reject) => {
-    const stmt = db.prepare(sql, params, (err) => {
+    db.get(sql, params, (err, row) => {
       if (err) {
         reject(err);
       } else {
-        resolve(stmt);
-      }
-    });
-  });
-}
-
-export function dbAllPromise(db, sql, ...params) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
+        resolve(row);
       }
     });
   });
@@ -83,30 +65,6 @@ export function dbAllPromise(db, sql, ...params) {
 export function dbClosePromise(db) {
   return new Promise((resolve, reject) => {
     db.close((err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-export function stmtRunPromise(stmt, ...params) {
-  return new Promise((resolve, reject) => {
-    stmt.run(params, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-export function stmtFinalizePromise(stmt) {
-  return new Promise((resolve, reject) => {
-    stmt.finalize((err) => {
       if (err) {
         reject(err);
       } else {

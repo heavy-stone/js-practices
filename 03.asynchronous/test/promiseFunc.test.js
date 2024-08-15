@@ -14,12 +14,7 @@ function afterTest() {
 }
 
 test("promise", (t, done) => {
-  const expected = [
-    "INSERT: id=1 title=Book 1",
-    "INSERT: id=2 title=Book 2",
-    "SELECT: id=1 title=Book 1",
-    "SELECT: id=2 title=Book 2",
-  ].join("\n");
+  const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
   console.log = (stdoutLine) => {
