@@ -1,4 +1,4 @@
-import { before, test } from "node:test";
+import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
 import asyncAwaitDbCheckerWithError from "../asyncAwaitDbCheckerWithError.js";
@@ -6,33 +6,30 @@ import asyncAwaitDbCheckerWithError from "../asyncAwaitDbCheckerWithError.js";
 let originalConsoleLog;
 
 before(() => {
-  originalConsoleLog = console.log;
+  originalConsoleLog = console.error;
 });
 
-function afterTest() {
-  console.log = originalConsoleLog;
-}
+after(() => {
+  console.error = originalConsoleLog;
+});
 
-test("async await with error", (t, done) => {
+test("async await db checker with error", (t, done) => {
   const expected = [
-    "Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
-    "Error: SQLITE_ERROR: no such table: no_table_name",
+    "SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
+    "SQLITE_ERROR: no such table: no_table_name",
   ].join("\n");
 
   let stdoutLines = [];
-  console.log = (stdoutLine) => {
+  console.error = (stdoutLine) => {
     stdoutLines.push(stdoutLine);
   };
 
-  asyncAwaitDbCheckerWithError(() => {
+  asyncAwaitDbCheckerWithError();
+
+  setTimeout(() => {
     const stdout = stdoutLines.join("\n");
-    try {
-      assert.strictEqual(stdout, expected);
-      done();
-    } catch (error) {
-      done(error);
-    } finally {
-      afterTest();
-    }
-  });
+
+    assert.strictEqual(stdout, expected);
+    done();
+  }, 10);
 });

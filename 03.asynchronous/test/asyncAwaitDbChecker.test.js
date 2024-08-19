@@ -1,4 +1,4 @@
-import { before, test } from "node:test";
+import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
 import asyncAwaitDbChecker from "../asyncAwaitDbChecker.js";
@@ -9,11 +9,11 @@ before(() => {
   originalConsoleLog = console.log;
 });
 
-function afterTest() {
+after(() => {
   console.log = originalConsoleLog;
-}
+});
 
-test("async await", (t, done) => {
+test("async await db checker", (t, done) => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
@@ -21,15 +21,12 @@ test("async await", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  asyncAwaitDbChecker(() => {
+  asyncAwaitDbChecker();
+
+  setTimeout(() => {
     const stdout = stdoutLines.join("\n");
-    try {
-      assert.strictEqual(stdout, expected);
-      done();
-    } catch (error) {
-      done(error);
-    } finally {
-      afterTest();
-    }
-  });
+
+    assert.strictEqual(stdout, expected);
+    done();
+  }, 10);
 });

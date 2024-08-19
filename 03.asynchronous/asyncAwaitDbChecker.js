@@ -8,9 +8,9 @@ import {
   dbRunPromise,
   dbGetPromise,
   dbClosePromise,
-} from "./promiseDbChecker.js";
+} from "./lib/dbPromises.js";
 
-export default async function asyncAwaitDbChecker(callback) {
+export default async function asyncAwaitDbChecker() {
   const db = new sqlite3.Database(":memory:");
 
   await dbRunPromise(
@@ -18,23 +18,23 @@ export default async function asyncAwaitDbChecker(callback) {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   );
 
-  const _this = await dbRunPromise(
+  const stmt = await dbRunPromise(
     db,
     "INSERT INTO books(title) VALUES (?)",
     "Book 1",
   );
-  console.log(_this.lastID);
+  console.log(stmt.lastID);
 
   const row = await dbGetPromise(
     db,
     "SELECT id, title FROM books WHERE id = ?",
-    _this.lastID,
+    stmt.lastID,
   );
   console.log(row);
 
   await dbRunPromise(db, "DROP TABLE books");
+
   await dbClosePromise(db);
-  if (callback) callback();
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

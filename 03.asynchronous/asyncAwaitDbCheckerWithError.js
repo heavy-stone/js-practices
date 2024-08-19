@@ -8,9 +8,9 @@ import {
   dbRunPromise,
   dbGetPromise,
   dbClosePromise,
-} from "./promiseSQLite3Checker.js";
+} from "./lib/dbPromises.js";
 
-export default async function asyncAwaitDbCheckerWithError(callback) {
+export default async function asyncAwaitDbCheckerWithError() {
   const db = new sqlite3.Database(":memory:");
 
   await dbRunPromise(
@@ -18,18 +18,21 @@ export default async function asyncAwaitDbCheckerWithError(callback) {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   );
 
-  let lastID;
+  let lastID = null;
   try {
-    const _this = await dbRunPromise(
+    const stmt = await dbRunPromise(
       db,
       "INSERT INTO books(title) VALUES (?)",
       null,
     );
-    console.log(_this.lastID);
-    lastID = _this.lastID;
+    console.log(stmt.lastID);
+    lastID = stmt.lastID;
   } catch (err) {
-    console.log(err);
-    lastID = null;
+    if (err.code === "SQLITE_CONSTRAINT") {
+      console.error(err.message);
+    } else {
+      throw err;
+    }
   }
 
   try {
@@ -40,12 +43,16 @@ export default async function asyncAwaitDbCheckerWithError(callback) {
     );
     console.log(row);
   } catch (err) {
-    console.log(err);
+    if (err.code === "SQLITE_ERROR") {
+      console.error(err.message);
+    } else {
+      throw err;
+    }
   }
 
   await dbRunPromise(db, "DROP TABLE books");
+
   await dbClosePromise(db);
-  if (callback) callback();
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
