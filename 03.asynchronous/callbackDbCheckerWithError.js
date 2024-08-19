@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-export default function callbackDbCheckerWithError(callback) {
+export default function callbackDbCheckerWithError() {
   const db = new sqlite3.Database(":memory:");
 
   db.run(
@@ -12,7 +12,11 @@ export default function callbackDbCheckerWithError(callback) {
     () => {
       db.run("INSERT INTO books(title) VALUES (?)", null, function (err) {
         if (err) {
-          console.log(err);
+          if (err.code === "SQLITE_CONSTRAINT") {
+            console.error(err.message);
+          } else {
+            throw err;
+          }
         } else {
           console.log(this.lastID);
         }
@@ -22,15 +26,17 @@ export default function callbackDbCheckerWithError(callback) {
           this.lastID,
           (err, row) => {
             if (err) {
-              console.log(err);
+              if (err.code === "SQLITE_ERROR") {
+                console.error(err.message);
+              } else {
+                throw err;
+              }
             } else {
               console.log(row);
             }
 
             db.run("DROP TABLE books", () => {
-              db.close(() => {
-                if (callback) callback();
-              });
+              db.close();
             });
           },
         );

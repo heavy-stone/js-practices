@@ -1,4 +1,4 @@
-import { before, test } from "node:test";
+import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
 import callbackDbChecker from "../callbackDbChecker.js";
@@ -9,11 +9,11 @@ before(() => {
   originalConsoleLog = console.log;
 });
 
-function afterTest() {
+after(() => {
   console.log = originalConsoleLog;
-}
+});
 
-test("callback", (t, done) => {
+test("callback db checker", (t, done) => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
@@ -21,18 +21,12 @@ test("callback", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  // https://nodejs.org/api/test.html#test-runner:~:text=test(%27callback%20passing%20test%27%2C%20(t%2C%20done)%20%3D%3E%20%7B
-  // done(): 非同期処理が完了した時点でdoneを呼び出すことで、テストフレームワークに対してテストが終了したことを通知する
-  // done(error): 非同期処理中にエラーが発生した場合、doneにエラーオブジェクトを渡すことで、テストフレームワークにエラーが発生したことを通知する
-  callbackDbChecker(() => {
+  callbackDbChecker();
+
+  setTimeout(() => {
     const stdout = stdoutLines.join("\n");
-    try {
-      assert.strictEqual(stdout, expected);
-      done();
-    } catch (error) {
-      done(error);
-    } finally {
-      afterTest();
-    }
-  });
+
+    assert.strictEqual(stdout, expected);
+    done();
+  }, 10);
 });

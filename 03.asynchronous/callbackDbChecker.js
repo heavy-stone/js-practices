@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-export default function callbackDbChecker(callback) {
+export default function callbackDbChecker() {
   const db = new sqlite3.Database(":memory:");
 
   db.run(
@@ -20,9 +20,7 @@ export default function callbackDbChecker(callback) {
             console.log(row);
 
             db.run("DROP TABLE books", () => {
-              db.close(() => {
-                if (callback) callback();
-              });
+              db.close();
             });
           },
         );
