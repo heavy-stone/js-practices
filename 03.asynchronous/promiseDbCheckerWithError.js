@@ -8,51 +8,46 @@ import {
   dbRunPromise,
   dbGetPromise,
   dbClosePromise,
-} from "./promiseDbChecker.js";
+} from "./lib/dbPromises.js";
 
-export default function promiseDbCheckerWithError(callback) {
+export default function promiseDbCheckerWithError() {
   const db = new sqlite3.Database(":memory:");
 
   dbRunPromise(
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   )
-    .then(() => {
-      return dbRunPromise(db, "INSERT INTO books(title) VALUES (?)", null);
+    .then(() => dbRunPromise(db, "INSERT INTO books(title) VALUES (?)", null))
+    .catch((err) => {
+      if (err) {
+        if (err.code === "SQLITE_CONSTRAINT") {
+          console.error(err.message);
+        } else {
+          throw err;
+        }
+      }
     })
-    .then(
-      (_this) => {
-        console.log(_this.lastID);
-        return _this.lastID;
-      },
-      (err) => {
-        console.log(err);
-      },
-    )
-    .then((lastID) => {
+    .then((stmt) => {
+      const lastID = stmt ? stmt.lastID : null;
       return dbGetPromise(
         db,
         "SELECT id, title FROM no_table_name WHERE id = ?",
         lastID,
       );
     })
-    .then(
-      (row) => {
-        console.log(row);
-      },
-      (err) => {
-        console.log(err);
-      },
-    )
-    .then(() => {
+    .catch((err) => {
+      if (err.code === "SQLITE_ERROR") {
+        console.error(err.message);
+      } else {
+        throw err;
+      }
+    })
+    .then((row) => {
+      if (row) console.log(row);
+
       return dbRunPromise(db, "DROP TABLE books");
     })
-    .then(() => {
-      return dbClosePromise(db);
-    })
-    .then(() => {
-      if (callback) callback();
-    });
+    .then(() => dbClosePromise(db));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

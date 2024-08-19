@@ -1,4 +1,4 @@
-import { before, test } from "node:test";
+import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
 import promiseDbChecker from "../promiseDbChecker.js";
@@ -9,11 +9,11 @@ before(() => {
   originalConsoleLog = console.log;
 });
 
-function afterTest() {
+after(() => {
   console.log = originalConsoleLog;
-}
+});
 
-test("promise", (t, done) => {
+test("promise db checker", (t, done) => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
@@ -21,15 +21,12 @@ test("promise", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  promiseDbChecker(() => {
+  promiseDbChecker();
+
+  setTimeout(() => {
     const stdout = stdoutLines.join("\n");
-    try {
-      assert.strictEqual(stdout, expected);
-      done();
-    } catch (error) {
-      done(error);
-    } finally {
-      afterTest();
-    }
-  });
+
+    assert.strictEqual(stdout, expected);
+    done();
+  }, 10);
 });
