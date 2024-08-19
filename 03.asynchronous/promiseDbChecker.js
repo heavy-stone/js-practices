@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-export default function promiseFunc(callback) {
+export default function promiseDbChecker(callback) {
   const db = new sqlite3.Database(":memory:");
 
   dbRunPromise(
@@ -75,5 +75,5 @@ export function dbClosePromise(db) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  promiseFunc();
+  promiseDbChecker();
 }

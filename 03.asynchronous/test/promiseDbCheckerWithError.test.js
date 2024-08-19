@@ -1,7 +1,7 @@
 import { before, test } from "node:test";
 import assert from "node:assert/strict";
 
-import asyncAwaitFuncWithError from "../asyncAwaitFuncWithError.js";
+import promiseDbCheckerWithError from "../promiseDbCheckerWithError.js";
 
 let originalConsoleLog;
 
@@ -13,7 +13,7 @@ function afterTest() {
   console.log = originalConsoleLog;
 }
 
-test("async await with error", (t, done) => {
+test("promise with error", (t, done) => {
   const expected = [
     "Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
     "Error: SQLITE_ERROR: no such table: no_table_name",
@@ -24,7 +24,7 @@ test("async await with error", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  asyncAwaitFuncWithError(() => {
+  promiseDbCheckerWithError(() => {
     const stdout = stdoutLines.join("\n");
     try {
       assert.strictEqual(stdout, expected);

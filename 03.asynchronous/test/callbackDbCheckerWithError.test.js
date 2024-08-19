@@ -1,7 +1,7 @@
 import { before, test } from "node:test";
 import assert from "node:assert/strict";
 
-import promiseFunc from "../promiseFunc.js";
+import callbackDbCheckerWithError from "../callbackDbCheckerWithError.js";
 
 let originalConsoleLog;
 
@@ -13,15 +13,18 @@ function afterTest() {
   console.log = originalConsoleLog;
 }
 
-test("promise", (t, done) => {
-  const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
+test("callback with error", (t, done) => {
+  const expected = [
+    "Error: SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
+    "Error: SQLITE_ERROR: no such table: no_table_name",
+  ].join("\n");
 
   let stdoutLines = [];
   console.log = (stdoutLine) => {
     stdoutLines.push(stdoutLine);
   };
 
-  promiseFunc(() => {
+  callbackDbCheckerWithError(() => {
     const stdout = stdoutLines.join("\n");
     try {
       assert.strictEqual(stdout, expected);

@@ -4,9 +4,13 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-import { dbRunPromise, dbGetPromise, dbClosePromise } from "./promiseFunc.js";
+import {
+  dbRunPromise,
+  dbGetPromise,
+  dbClosePromise,
+} from "./promiseSQLite3Checker.js";
 
-export default async function asyncAwaitFuncWithError(callback) {
+export default async function asyncAwaitDbCheckerWithError(callback) {
   const db = new sqlite3.Database(":memory:");
 
   await dbRunPromise(
@@ -45,5 +49,5 @@ export default async function asyncAwaitFuncWithError(callback) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  asyncAwaitFuncWithError();
+  asyncAwaitDbCheckerWithError();
 }
