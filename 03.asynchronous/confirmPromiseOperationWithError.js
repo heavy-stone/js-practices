@@ -28,11 +28,10 @@ export default function confirmPromiseOperationWithError() {
       }
     })
     .then((stmt) => {
-      const lastID = stmt ? stmt.lastID : null;
       return dbGetPromise(
         db,
         "SELECT id, title FROM no_table_name WHERE id = ?",
-        lastID,
+        stmt ? stmt.lastID : null,
       );
     })
     .catch((err) => {

@@ -18,15 +18,10 @@ export default async function confirmAsyncAwaitOperationWithError() {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   );
 
-  let lastID = null;
+  let stmt = null;
   try {
-    const stmt = await dbRunPromise(
-      db,
-      "INSERT INTO books(title) VALUES (?)",
-      null,
-    );
+    stmt = await dbRunPromise(db, "INSERT INTO books(title) VALUES (?)", null);
     console.log(stmt.lastID);
-    lastID = stmt.lastID;
   } catch (err) {
     if (err.code === "SQLITE_CONSTRAINT") {
       console.error(err.message);
@@ -39,7 +34,7 @@ export default async function confirmAsyncAwaitOperationWithError() {
     const row = await dbGetPromise(
       db,
       "SELECT id, title FROM no_table_name WHERE id = ?",
-      lastID,
+      stmt ? stmt.lastID : null,
     );
     console.log(row);
   } catch (err) {
