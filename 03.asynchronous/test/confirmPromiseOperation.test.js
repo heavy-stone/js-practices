@@ -13,7 +13,13 @@ after(() => {
   console.log = originalConsoleLog;
 });
 
-test("promise", (t, done) => {
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+test("promise", async () => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
@@ -22,11 +28,9 @@ test("promise", (t, done) => {
   };
 
   confirmPromiseOperation();
+  await sleep(10);
 
-  setTimeout(() => {
-    const stdout = stdoutLines.join("\n");
+  const stdout = stdoutLines.join("\n");
 
-    assert.strictEqual(stdout, expected);
-    done();
-  }, 10);
+  assert.strictEqual(stdout, expected);
 });

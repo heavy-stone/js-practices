@@ -13,23 +13,27 @@ after(() => {
   console.error = originalConsoleLog;
 });
 
-test("async await with error", (t, done) => {
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+test("async await with error", async () => {
   const expected = [
     "SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
     "SQLITE_ERROR: no such table: no_table_name",
   ].join("\n");
 
-  let stdoutLines = [];
-  console.error = (stdoutLine) => {
-    stdoutLines.push(stdoutLine);
+  let stderrLines = [];
+  console.error = (stderrLine) => {
+    stderrLines.push(stderrLine);
   };
 
   confirmAsyncAwaitOperationWithError();
+  await sleep(10);
 
-  setTimeout(() => {
-    const stdout = stdoutLines.join("\n");
+  const stderr = stderrLines.join("\n");
 
-    assert.strictEqual(stdout, expected);
-    done();
-  }, 10);
+  assert.strictEqual(stderr, expected);
 });
