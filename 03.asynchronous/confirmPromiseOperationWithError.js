@@ -10,7 +10,7 @@ import {
   dbClosePromise,
 } from "./lib/dbPromises.js";
 
-export default function promiseDbCheckerWithError() {
+export default function confirmPromiseOperationWithError() {
   const db = new sqlite3.Database(":memory:");
 
   dbRunPromise(
@@ -51,5 +51,5 @@ export default function promiseDbCheckerWithError() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  promiseDbCheckerWithError();
+  confirmPromiseOperationWithError();
 }

@@ -1,7 +1,7 @@
 import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
-import callbackDbChecker from "../callbackDbChecker.js";
+import confirmPromiseOperation from "../confirmPromiseOperation.js";
 
 let originalConsoleLog;
 
@@ -13,7 +13,7 @@ after(() => {
   console.log = originalConsoleLog;
 });
 
-test("callback db checker", (t, done) => {
+test("promise", (t, done) => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
   let stdoutLines = [];
@@ -21,7 +21,7 @@ test("callback db checker", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  callbackDbChecker();
+  confirmPromiseOperation();
 
   setTimeout(() => {
     const stdout = stdoutLines.join("\n");

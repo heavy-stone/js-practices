@@ -1,7 +1,7 @@
 import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
-import callbackDbCheckerWithError from "../callbackDbCheckerWithError.js";
+import confirmCallbackOperationWithError from "../confirmCallbackOperationWithError.js";
 
 let originalConsoleLog;
 
@@ -13,7 +13,7 @@ after(() => {
   console.error = originalConsoleLog;
 });
 
-test("callback db checker with error", (t, done) => {
+test("callback with error", (t, done) => {
   const expected = [
     "SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
     "SQLITE_ERROR: no such table: no_table_name",
@@ -24,7 +24,7 @@ test("callback db checker with error", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  callbackDbCheckerWithError();
+  confirmCallbackOperationWithError();
 
   setTimeout(() => {
     const stdout = stdoutLines.join("\n");

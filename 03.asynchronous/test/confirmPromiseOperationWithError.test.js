@@ -1,7 +1,7 @@
 import { before, after, test } from "node:test";
 import assert from "node:assert/strict";
 
-import promiseDbCheckerWithError from "../promiseDbCheckerWithError.js";
+import confirmPromiseOperationWithError from "../confirmPromiseOperationWithError.js";
 
 let originalConsoleLog;
 
@@ -13,7 +13,7 @@ after(() => {
   console.error = originalConsoleLog;
 });
 
-test("promise db checker with error", (t, done) => {
+test("promise with error", (t, done) => {
   const expected = [
     "SQLITE_CONSTRAINT: NOT NULL constraint failed: books.title",
     "SQLITE_ERROR: no such table: no_table_name",
@@ -24,7 +24,7 @@ test("promise db checker with error", (t, done) => {
     stdoutLines.push(stdoutLine);
   };
 
-  promiseDbCheckerWithError();
+  confirmPromiseOperationWithError();
 
   setTimeout(() => {
     const stdout = stdoutLines.join("\n");

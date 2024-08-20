@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
-export default function callbackDbCheckerWithError() {
+export default function confirmCallbackOperationWithError() {
   const db = new sqlite3.Database(":memory:");
 
   db.run(
@@ -46,5 +46,5 @@ export default function callbackDbCheckerWithError() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  callbackDbCheckerWithError();
+  confirmCallbackOperationWithError();
 }

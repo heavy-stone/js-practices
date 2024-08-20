@@ -10,7 +10,7 @@ import {
   dbClosePromise,
 } from "./lib/dbPromises.js";
 
-export default async function asyncAwaitDbCheckerWithError() {
+export default async function confirmAsyncAwaitOperationWithError() {
   const db = new sqlite3.Database(":memory:");
 
   await dbRunPromise(
@@ -56,5 +56,5 @@ export default async function asyncAwaitDbCheckerWithError() {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  asyncAwaitDbCheckerWithError();
+  confirmAsyncAwaitOperationWithError();
 }
