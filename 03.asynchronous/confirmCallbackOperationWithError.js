@@ -11,12 +11,12 @@ export default function confirmCallbackOperationWithError() {
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
     () => {
       db.run("INSERT INTO books(title) VALUES (?)", null, function (err) {
-        if (err) {
-          if (err.code === "SQLITE_CONSTRAINT") {
-            console.error(err.message);
-          } else {
-            throw err;
-          }
+        if (
+          err &&
+          err.errno === sqlite3.CONSTRAINT &&
+          err.code === "SQLITE_CONSTRAINT"
+        ) {
+          console.error(err.message);
         } else {
           console.log(this.lastID);
         }
@@ -25,12 +25,12 @@ export default function confirmCallbackOperationWithError() {
           "SELECT id, title FROM no_table_name WHERE id = ?",
           this.lastID,
           (err, row) => {
-            if (err) {
-              if (err.code === "SQLITE_ERROR") {
-                console.error(err.message);
-              } else {
-                throw err;
-              }
+            if (
+              err &&
+              err.errno === sqlite3.ERROR &&
+              err.code === "SQLITE_ERROR"
+            ) {
+              console.error(err.message);
             } else {
               console.log(row);
             }

@@ -23,7 +23,11 @@ export default async function confirmAsyncAwaitOperationWithError() {
     stmt = await dbRunPromise(db, "INSERT INTO books(title) VALUES (?)", null);
     console.log(stmt.lastID);
   } catch (err) {
-    if (err.code === "SQLITE_CONSTRAINT") {
+    if (
+      err &&
+      err.errno === sqlite3.CONSTRAINT &&
+      err.code === "SQLITE_CONSTRAINT"
+    ) {
       console.error(err.message);
     } else {
       throw err;
@@ -38,7 +42,7 @@ export default async function confirmAsyncAwaitOperationWithError() {
     );
     console.log(row);
   } catch (err) {
-    if (err.code === "SQLITE_ERROR") {
+    if (err && err.errno === sqlite3.ERROR && err.code === "SQLITE_ERROR") {
       console.error(err.message);
     } else {
       throw err;
