@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import process from "process";
 import sqlite3 from "sqlite3";
 
+import { createDb } from "./lib/dbModules.js";
 import {
   dbRunPromise,
   dbGetPromise,
@@ -11,7 +12,7 @@ import {
 } from "./lib/dbPromises.js";
 
 export default async function confirmAsyncAwaitOperationWithError() {
-  const db = new sqlite3.Database(":memory:");
+  const db = createDb();
 
   await dbRunPromise(
     db,

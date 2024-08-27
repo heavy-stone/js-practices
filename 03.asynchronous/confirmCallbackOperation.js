@@ -2,10 +2,11 @@
 
 import { fileURLToPath } from "url";
 import process from "process";
-import sqlite3 from "sqlite3";
+
+import { createDb } from "./lib/dbModules.js";
 
 export default function confirmCallbackOperation() {
-  const db = new sqlite3.Database(":memory:");
+  const db = createDb();
 
   db.run(
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
