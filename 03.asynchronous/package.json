@@ -10,6 +10,7 @@
   },
   "type": "module",
   "dependencies": {
+    "sinon": "^18.0.0",
     "sqlite3": "^5.1.7"
   }
 }
