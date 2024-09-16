@@ -5,9 +5,7 @@ import process from "process";
 
 import { createDb } from "./lib/dbModules.js";
 
-export default function confirmCallbackOperation() {
-  const db = createDb();
-
+export default function confirmCallbackOperation(db = createDb()) {
   db.run(
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
     () => {

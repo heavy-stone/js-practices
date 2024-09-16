@@ -6,33 +6,34 @@ import sqlite3 from "sqlite3";
 
 import { createDb } from "./lib/dbModules.js";
 
-export default function confirmCallbackOperationWithError() {
-  const db = createDb();
-
+export default function confirmCallbackOperationWithError(db = createDb()) {
   db.run(
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
     () => {
       db.run("INSERT INTO books(title) VALUES (?)", null, function (err) {
-        if (
-          err &&
-          err.errno === sqlite3.CONSTRAINT &&
-          err.code === "SQLITE_CONSTRAINT"
-        ) {
-          console.error(err.message);
+        if (err) {
+          if (
+            err.errno === sqlite3.CONSTRAINT &&
+            err.code === "SQLITE_CONSTRAINT"
+          ) {
+            console.error(`Expected error in db.run(): ${err.message}`);
+          } else if (err instanceof Error) {
+            console.error(`Unexpected error in db.run(): ${err.message}`);
+          }
         } else {
           console.log(this.lastID);
         }
 
         db.get(
           "SELECT id, title FROM no_table_name WHERE id = ?",
-          this.lastID,
+          this ? this.lastID : null,
           (err, row) => {
-            if (
-              err &&
-              err.errno === sqlite3.ERROR &&
-              err.code === "SQLITE_ERROR"
-            ) {
-              console.error(err.message);
+            if (err) {
+              if (err.errno === sqlite3.ERROR && err.code === "SQLITE_ERROR") {
+                console.error(`Expected error in db.get(): ${err.message}`);
+              } else if (err instanceof Error) {
+                console.error(`Unexpected error in db.get(): ${err.message}`);
+              }
             } else {
               console.log(row);
             }

@@ -1,16 +1,21 @@
-import { before, after, test } from "node:test";
+import { beforeEach, afterEach, test } from "node:test";
 import assert from "node:assert/strict";
 
 import confirmCallbackOperation from "../confirmCallbackOperation.js";
 
 let originalConsoleLog;
+let stdoutLines = [];
 
-before(() => {
+beforeEach(() => {
   originalConsoleLog = console.log;
+  console.log = (stdoutLine) => {
+    stdoutLines.push(stdoutLine);
+  };
 });
 
-after(() => {
+afterEach(() => {
   console.log = originalConsoleLog;
+  stdoutLines = [];
 });
 
 function sleep(ms) {
@@ -21,11 +26,6 @@ function sleep(ms) {
 
 test("callback", async () => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
-
-  let stdoutLines = [];
-  console.log = (stdoutLine) => {
-    stdoutLines.push(stdoutLine);
-  };
 
   confirmCallbackOperation();
   await sleep(10);
