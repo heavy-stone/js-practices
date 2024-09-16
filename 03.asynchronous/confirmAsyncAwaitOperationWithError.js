@@ -26,7 +26,9 @@ export default async function confirmAsyncAwaitOperationWithError(
   } catch (err) {
     if (
       err &&
+      "errno" in err &&
       err.errno === sqlite3.CONSTRAINT &&
+      "code" in err &&
       err.code === "SQLITE_CONSTRAINT"
     ) {
       console.error(`Expected error in db.run(): ${err.message}`);
@@ -43,7 +45,13 @@ export default async function confirmAsyncAwaitOperationWithError(
     );
     console.log(row);
   } catch (err) {
-    if (err && err.errno === sqlite3.ERROR && err.code === "SQLITE_ERROR") {
+    if (
+      err &&
+      "errno" in err &&
+      err.errno === sqlite3.ERROR &&
+      "code" in err &&
+      err.code === "SQLITE_ERROR"
+    ) {
       console.error(`Expected error in db.get(): ${err.message}`);
     } else {
       throw err;

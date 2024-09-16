@@ -13,7 +13,9 @@ export default function confirmCallbackOperationWithError(db = createDb()) {
       db.run("INSERT INTO books(title) VALUES (?)", null, function (err) {
         if (err) {
           if (
+            "errno" in err &&
             err.errno === sqlite3.CONSTRAINT &&
+            "code" in err &&
             err.code === "SQLITE_CONSTRAINT"
           ) {
             console.error(`Expected error in db.run(): ${err.message}`);
@@ -29,7 +31,12 @@ export default function confirmCallbackOperationWithError(db = createDb()) {
           this ? this.lastID : null,
           (err, row) => {
             if (err) {
-              if (err.errno === sqlite3.ERROR && err.code === "SQLITE_ERROR") {
+              if (
+                "errno" in err &&
+                err.errno === sqlite3.ERROR &&
+                "code" in err &&
+                err.code === "SQLITE_ERROR"
+              ) {
                 console.error(`Expected error in db.get(): ${err.message}`);
               } else if (err instanceof Error) {
                 console.error(`Unexpected error in db.get(): ${err.message}`);
