@@ -1,34 +1,27 @@
-import { before, after, test } from "node:test";
+import { beforeEach, afterEach, test } from "node:test";
 import assert from "node:assert/strict";
 
 import confirmPromiseOperation from "../confirmPromiseOperation.js";
 
 let originalConsoleLog;
+let stdoutLines = [];
 
-before(() => {
+beforeEach(() => {
   originalConsoleLog = console.log;
+  console.log = (stdoutLine) => {
+    stdoutLines.push(stdoutLine);
+  };
 });
 
-after(() => {
+afterEach(() => {
   console.log = originalConsoleLog;
+  stdoutLines = [];
 });
-
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
 
 test("promise", async () => {
   const expected = ["1", { id: 1, title: "Book 1" }].join("\n");
 
-  let stdoutLines = [];
-  console.log = (stdoutLine) => {
-    stdoutLines.push(stdoutLine);
-  };
-
-  confirmPromiseOperation();
-  await sleep(10);
+  await confirmPromiseOperation();
 
   const stdout = stdoutLines.join("\n");
 

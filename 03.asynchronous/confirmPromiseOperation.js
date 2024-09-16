@@ -10,10 +10,8 @@ import {
   dbClosePromise,
 } from "./lib/dbPromises.js";
 
-export default function confirmPromiseOperation() {
-  const db = createDb();
-
-  dbRunPromise(
+export default async function confirmPromiseOperation(db = createDb()) {
+  return dbRunPromise(
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   )

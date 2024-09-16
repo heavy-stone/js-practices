@@ -11,10 +11,10 @@ import {
   dbClosePromise,
 } from "./lib/dbPromises.js";
 
-export default function confirmPromiseOperationWithError() {
-  const db = createDb();
-
-  dbRunPromise(
+export default async function confirmPromiseOperationWithError(
+  db = createDb(),
+) {
+  return dbRunPromise(
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
   )
@@ -25,7 +25,7 @@ export default function confirmPromiseOperationWithError() {
         err.errno === sqlite3.CONSTRAINT &&
         err.code === "SQLITE_CONSTRAINT"
       ) {
-        console.error(err.message);
+        console.error(`Expected error in db.run(): ${err.message}`);
       } else {
         throw err;
       }
@@ -39,7 +39,7 @@ export default function confirmPromiseOperationWithError() {
     })
     .catch((err) => {
       if (err && err.errno === sqlite3.ERROR && err.code === "SQLITE_ERROR") {
-        console.error(err.message);
+        console.error(`Expected error in db.get(): ${err.message}`);
       } else {
         throw err;
       }
