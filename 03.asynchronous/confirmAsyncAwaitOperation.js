@@ -10,9 +10,7 @@ import {
   dbClosePromise,
 } from "./lib/dbPromises.js";
 
-export default async function confirmAsyncAwaitOperation() {
-  const db = createDb();
-
+export default async function confirmAsyncAwaitOperation(db = createDb()) {
   await dbRunPromise(
     db,
     "CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT NOT NULL UNIQUE)",
